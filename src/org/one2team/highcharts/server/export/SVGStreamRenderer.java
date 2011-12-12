@@ -18,18 +18,20 @@ class SVGStreamRenderer<T> extends PojoRenderer<T> {
 		ByteArrayOutputStream baos = null;
 		Reader reader = null;
 		try {
-			baos = new ByteArrayOutputStream ();
-
-			wrapped.setOutputStream (baos).render ();
-
-			reader = new StringReader (baos.toString ());
-
+			
 			if (getOutputStream () == null)
 				throw (new RuntimeException ("outputstream cannot be null"));
 			
-			transcoder.transcode (new TranscoderInput (reader), new TranscoderOutput (getOutputStream ()));
+			baos = new ByteArrayOutputStream ();
 
-		} catch (TranscoderException e) {
+			wrapped.setOutputStream (getOutputStream ()).render ();
+
+			/*
+			reader = new StringReader (baos.toString ());
+			
+			transcoder.transcode (new TranscoderInput (reader), new TranscoderOutput (getOutputStream ()));
+*/
+		} catch (Exception e) {
 			throw new RuntimeException (e);
 		} finally {
 			IOUtils.closeQuietly (baos);

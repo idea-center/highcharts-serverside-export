@@ -1,5 +1,6 @@
 package org.one2team.highcharts.server.export;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -17,6 +18,25 @@ public class HighchartsExporter<T> {
 				                     type.getTranscoder ());
 	}
 
+	public void exportSvg(T chartOptions,
+								     T globalOptions,
+								     OutputStream out){
+		
+		try{
+			renderer.setChartOptions (chartOptions)
+					    .setGlobalOptions (globalOptions)
+					    .setOutputStream (out)
+					    .render ();
+		} catch (Exception e) {
+			e.printStackTrace ();
+			throw (new RuntimeException (e));
+		} finally {
+			if (out != null)
+				IOUtils.closeQuietly (out);
+		}
+		
+	}
+	
 	public void export (T chartOptions,
 			                T globalOptions,
 			                File file) {

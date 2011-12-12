@@ -1,6 +1,10 @@
 package examples;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
 import org.one2team.highcharts.server.export.ExportType;
 import org.one2team.highcharts.server.export.HighchartsExporter;
@@ -24,6 +28,7 @@ public class SimpleExport {
 		//   (see http://highcharts.com/demo/column-basic)
 		ChartOptions chartOptions1 = highchartsSamples.createColumnBasic ();
 
+		/*
 		// ====================================================================
 		// Chart export
 		// ----------------
@@ -65,6 +70,33 @@ public class SimpleExport {
 		String json = jsonify.toJson ();
 		System.out.println("json "+json);
 		pngFromJsonExporter.export (json, null, new File (exportDirectory, "column-basic-from-jsonified-java.png"));
+		
+		*/
+		// Chart png from JSON in file
+		String filePath = "./default.json";
+		if(args.length > 1){ filePath = args[1]; }
+		StringBuilder optionsText = new StringBuilder();
+			try {	 
+				BufferedReader br = new BufferedReader(
+					new FileReader(filePath));	 
+				// capture file contents
+				String line = null;
+				while((line = br.readLine()) != null ){
+					optionsText.append(line);
+					optionsText.append(System.getProperty("line.separator"));
+				}
+				// print file contents
+				System.out.println("Read json: \n" + optionsText);	 
+			} catch (IOException e) {
+				e.printStackTrace();
+				return;
+			}
+
+			HighchartsExporter<String> png2FromJsonExporter = ExportType.png.createJsonExporter();
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			png2FromJsonExporter.exportSvg (optionsText.toString(), null, baos);
+			// show on console
+			System.out.println("svg generated: " + baos.toString());
 	}
 
 
