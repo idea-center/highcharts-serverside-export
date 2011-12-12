@@ -28,7 +28,7 @@ public class SimpleExport {
 		//   (see http://highcharts.com/demo/column-basic)
 		ChartOptions chartOptions1 = highchartsSamples.createColumnBasic ();
 
-		/*
+		
 		// ====================================================================
 		// Chart export
 		// ----------------
@@ -71,7 +71,7 @@ public class SimpleExport {
 		System.out.println("json "+json);
 		pngFromJsonExporter.export (json, null, new File (exportDirectory, "column-basic-from-jsonified-java.png"));
 		
-		*/
+		
 		// Chart png from JSON in file
 		String filePath = "./default.json";
 		if(args.length > 1){ filePath = args[1]; }
@@ -92,11 +92,16 @@ public class SimpleExport {
 				return;
 			}
 
-			HighchartsExporter<String> png2FromJsonExporter = ExportType.png.createJsonExporter();
+			// try rendering directly to stream
+			HighchartsExporter<String> svgFromJsonExporter = ExportType.svg.createJsonExporter();
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			png2FromJsonExporter.exportSvg (optionsText.toString(), null, baos);
+			svgFromJsonExporter.export (optionsText.toString(), null, baos);
 			// show on console
 			System.out.println("svg generated: " + baos.toString());
+			
+			// try rendering to File
+			HighchartsExporter<String> svg2FromJsonExporter = ExportType.svg.createJsonExporter();
+			svg2FromJsonExporter.export (optionsText.toString(), null, new File (exportDirectory, "svgFromJson.html"));
 	}
 
 

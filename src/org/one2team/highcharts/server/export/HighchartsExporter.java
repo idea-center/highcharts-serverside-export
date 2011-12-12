@@ -1,8 +1,6 @@
 package org.one2team.highcharts.server.export;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
@@ -18,15 +16,12 @@ public class HighchartsExporter<T> {
 				                     type.getTranscoder ());
 	}
 
-	public void exportSvg(T chartOptions,
+	public void export(T chartOptions,
 								     T globalOptions,
-								     OutputStream out){
-		
+								     OutputStream out){		
 		try{
-			renderer.setChartOptions (chartOptions)
-					    .setGlobalOptions (globalOptions)
-					    .setOutputStream (out)
-					    .render ();
+			render (chartOptions, globalOptions, out);
+			
 		} catch (Exception e) {
 			e.printStackTrace ();
 			throw (new RuntimeException (e));
@@ -43,8 +38,9 @@ public class HighchartsExporter<T> {
 		
 		OutputStream fos = null;
 		try {
-			fos = render (chartOptions, globalOptions, file);
-
+			fos = new FileOutputStream (file);
+			render (chartOptions, globalOptions, fos);
+			
 		} catch (Exception e) {
 			e.printStackTrace ();
 			throw (new RuntimeException (e));
@@ -54,15 +50,13 @@ public class HighchartsExporter<T> {
 		}
 	}
 
-	private OutputStream render (T chartOptions,
-			                         T globalOptions,
-                               File file) throws FileNotFoundException {
-		FileOutputStream fos;
+	private void render (T chartOptions,
+                       T globalOptions,
+                       OutputStream out) {
 		renderer.setChartOptions (chartOptions)
 				    .setGlobalOptions (globalOptions)
-				    .setOutputStream (fos = new FileOutputStream (file))
+				    .setOutputStream (out)
 				    .render ();
-		return fos;
 	}
 
 	public SVGStreamRenderer<T> getRenderer () {

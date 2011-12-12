@@ -9,6 +9,12 @@ import org.one2team.highcharts.server.export.util.SVGRendererInternalJson;
 import org.one2team.highcharts.shared.ChartOptions;
 
 public enum ExportType {
+	svg {
+		@Override
+		protected Transcoder getTranscoder () {
+			return null;
+		}
+	},
 	png {
 		@Override
 		protected Transcoder getTranscoder () {

@@ -24,18 +24,20 @@ class SVGStreamRenderer<T> extends PojoRenderer<T> {
 			
 			baos = new ByteArrayOutputStream ();
 
-			wrapped.setOutputStream (getOutputStream ()).render ();
+			// if transcoder is null, render directly to output stream
+			if(transcoder == null){
+				wrapped.setOutputStream (getOutputStream ()).render ();
+			}else{
+				wrapped.setOutputStream (baos).render ();
+				reader = new StringReader (baos.toString ());
+				transcoder.transcode (new TranscoderInput (reader), new TranscoderOutput (getOutputStream ()));
+			}
 
-			/*
-			reader = new StringReader (baos.toString ());
-			
-			transcoder.transcode (new TranscoderInput (reader), new TranscoderOutput (getOutputStream ()));
-*/
-		} catch (Exception e) {
+		} catch (TranscoderException e) {
 			throw new RuntimeException (e);
 		} finally {
 			IOUtils.closeQuietly (baos);
-			IOUtils.closeQuietly (reader);
+			if(reader != null){	IOUtils.closeQuietly (reader); }
 		}
 	}
 
